@@ -1,0 +1,8 @@
+{
+  "chunk_id": "AKI_003",
+  "condition": "ACUTE KIDNEY INJURY",
+  "subheading": "STAGING OF ACUTE KIDNEY INJURY AND DIAGNOSTIC CRITERIA",
+  "subheading_corrected": "STAGING OF ACUTE KIDNEY INJURY AND DIAGNOSTIC CRITERIA",
+  "source": "NSTG 2022",
+  "text": "STAGING OF ACUTE KIDNEY INJURY AND DIAGNOSTIC CRITERIA\n# Table 8.1: Staging of Acute Kidney Injury\n| Stage | Change in Serum Creatinine (Scr) | % Increase in Serum Creatinine (Scr) | Urine Volume |\n|---|---|---|---|\n| 1 | Rise in Scr by >0.3 mg/dL (26.4 μmol/L) | Increase of >150 - 190% (1.5 to 1.9-fold increase) from baseline | Urine output less than 0.5 ml/kg/hr for more than 6 hours |\n| 2 | | Rise in serum creatinine by >200 - 290% (2 to 2.9-fold increase) from baseline | Urine output less than 0.5 ml/kg/hr for more than 12 hours |\n| 3 | Scr ≥4.0 mg/dL (≥353.6 μmol/L) OR initiation of renal replacement therapy | Rise in serum creatinine to >300% (≥3-fold) from baseline. OR eGFR <35 ml/min/1.73m² in those <18 years | Urine output less than 0.3 ml/kg/hr for 24 hours or anuria for ≥12 hours |"
+}
