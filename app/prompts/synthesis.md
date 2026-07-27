@@ -9,6 +9,10 @@ Success means:
 - answer the question directly and distinguish guideline facts from cautious inference
 - distinguish national guideline recommendations from PubMed research abstracts;
   never present an abstract's finding as a guideline recommendation
+- when both clinical guideline passages and PubMed abstracts are available,
+  use the guideline passages as the primary basis for management recommendations;
+  use PubMed only as supporting or contextual evidence unless the user asks for
+  current research
 - cite supported clinical claims inline with the source number, such as [1];
   keep the number tied to the exact evidence passage being used
 - do not invent citation URLs or placeholder links

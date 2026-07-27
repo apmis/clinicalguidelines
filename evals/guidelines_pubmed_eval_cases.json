@@ -1,0 +1,74 @@
+[
+  {
+    "id": "severe_malaria_management",
+    "question": "How should severe malaria be managed?",
+    "required_answer_terms": ["parenteral artesunate", "24 hours", "ACT"],
+    "expected_source_terms": ["MALARIA", "TREATMENT OF MALARIA"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "uncomplicated_malaria_adult",
+    "question": "How is uncomplicated malaria treated in an adult?",
+    "required_answer_terms": ["artemether", "lumefantrine", "3 days"],
+    "expected_source_terms": ["MALARIA", "TREATMENT OF MALARIA"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "breast_tumour_oncovin",
+    "question": "How should breast tumour be managed and what is the dose of Oncovin?",
+    "required_answer_terms": ["multimodal", "vincristine", "1.4 mg"],
+    "expected_source_terms": ["BREAST CANCER", "LYMPHOMA"],
+    "prefer_pubmed": true,
+    "forbidden_answer_terms": ["Oncovin is a standard breast cancer regimen"]
+  },
+  {
+    "id": "sciatica_management",
+    "question": "How should sciatica be managed?",
+    "required_answer_terms": ["red flags", "physical therapy", "NSAIDs"],
+    "expected_source_terms": ["BACK PAIN"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "hypertension_pregnancy",
+    "question": "How should hypertension in pregnancy be managed?",
+    "required_answer_terms": ["pregnancy", "hydralazine", "blood-pressure"],
+    "expected_source_terms": ["HYPERTENSION", "PREGNANCY"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "type_2_diabetes",
+    "question": "How should type 2 diabetes mellitus be managed?",
+    "required_answer_terms": ["dietary", "physical activity", "HbA1c"],
+    "expected_source_terms": ["DIABETES"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "child_pneumonia",
+    "question": "How should pneumonia in a child be managed?",
+    "required_answer_terms": ["oxygen", "antibiotics", "hospital"],
+    "expected_source_terms": ["PNEUMONIA"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "acute_asthma",
+    "question": "How should acute asthma exacerbation be managed?",
+    "required_answer_terms": ["salbutamol", "oxygen", "steroid"],
+    "expected_source_terms": ["ASTHMA"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "uti_pregnancy",
+    "question": "How should urinary tract infection in pregnancy be managed?",
+    "required_answer_terms": ["pregnancy", "antibiotic"],
+    "expected_source_terms": ["URINARY TRACT", "PREGNANCY"],
+    "prefer_pubmed": true
+  },
+  {
+    "id": "irrelevant_crypto",
+    "question": "What is the best cryptocurrency to buy today?",
+    "required_answer_terms": ["clinical evidence", "no evidence"],
+    "expected_source_terms": [],
+    "prefer_pubmed": false,
+    "forbidden_answer_terms": ["Bitcoin", "Ethereum"]
+  }
+]
