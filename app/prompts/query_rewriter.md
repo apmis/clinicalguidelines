@@ -8,4 +8,8 @@ Success means:
   treatment, dose, contraindications, monitoring, and escalation only when relevant
 - never invent a diagnosis, dose, duration, result, age, pregnancy status, or history
 - return a concise retrieval query, not an answer
-- return up to eight short keywords that may support future hybrid search
+- return three to eight short, medically meaningful PubMed search concepts in
+  `pubmed_keywords`; prefer conditions, interventions, populations, and outcomes
+- keep PubMed concepts atomic, usually one to three words, such as
+  "breast cancer", "vincristine", "oncovin", or "severe malaria"
+- do not put Boolean operators, field tags, quotes, or an answer in a keyword

@@ -23,6 +23,7 @@ GUIDELINES_REQUEST_TIMEOUT_SECS = 60
 GUIDELINES_DATA_PATH = "data/guidelines/nstg-2022/chunks"
 GUIDELINES_QUERY_MODEL = "openai/gpt-5.4-nano"
 GUIDELINES_ANSWER_MODEL = "openai/gpt-5.4-nano"
+PUBMED_EUTILS_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 
 
 class GuidelinesSettings(BaseSettings):
@@ -38,6 +39,13 @@ class GuidelinesSettings(BaseSettings):
     guidelines_answer_max_output_tokens: int = 1600
     guidelines_answer_reasoning_effort: str = "low"
     guidelines_max_context_characters: int = 24000
+
+    pubmed_api_key: str | None = None
+    pubmed_email: str | None = None
+    pubmed_tool: str = "healthstack_guidelines"
+    pubmed_request_timeout_secs: int = 20
+    pubmed_search_top_k: int = 10
+    pubmed_max_context_articles: int = 3
 
     model_config = SettingsConfigDict(
         env_file=".env",

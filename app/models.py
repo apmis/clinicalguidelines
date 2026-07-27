@@ -1,6 +1,6 @@
 """Shared validated models for guideline retrieval and answer generation."""
 
-from typing import Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -59,14 +59,14 @@ class GuidelinesPipelineInput(BaseModel):
 
 class GuidelineRetrievalPlan(BaseModel):
     retrieval_query: str = Field(min_length=1)
-    keywords: list[str] = Field(default_factory=list)
+    pubmed_keywords: list[str] = Field(default_factory=list)
 
     @field_validator("retrieval_query", mode="before")
     @classmethod
     def clean_retrieval_query(cls, value: str) -> str:
         return _clean_required_text(value)
 
-    @field_validator("keywords", mode="before")
+    @field_validator("pubmed_keywords", mode="before")
     @classmethod
     def clean_keywords(cls, value: Any) -> list[str]:
         if not isinstance(value, list):
@@ -80,6 +80,7 @@ class GuidelineRetrievalPlan(BaseModel):
 
 
 class GuidelineSource(BaseModel):
+    source_type: Literal["guideline"] = "guideline"
     chunk_id: str
     document_id: str
     title: str
@@ -94,6 +95,27 @@ class GuidelineSource(BaseModel):
     score: float
 
 
+class PubMedSource(BaseModel):
+    source_type: Literal["pubmed"] = "pubmed"
+    pmid: str
+    title: str
+    abstract: str
+    authors: list[str] = Field(default_factory=list)
+    journal: str | None = None
+    publication_date: str | None = None
+    doi: str | None = None
+    publication_types: list[str] = Field(default_factory=list)
+    source_url: str
+    relevance_score: float
+    matched_searches: list[Literal["AND", "OR"]] = Field(default_factory=list)
+
+
+ClinicalEvidenceSource = Annotated[
+    GuidelineSource | PubMedSource,
+    Field(discriminator="source_type"),
+]
+
+
 class GuidelinesSearchResponse(BaseModel):
     question: str
     sources: list[GuidelineSource] = Field(default_factory=list)
@@ -103,6 +125,9 @@ class GuidelinesSearchResponse(BaseModel):
 class GuidelinesAnswerResponse(BaseModel):
     question: str
     retrieval_query: str
+    pubmed_keywords: list[str] = Field(default_factory=list)
+    pubmed_and_query: str | None = None
+    pubmed_or_query: str | None = None
     answer: str
-    sources: list[GuidelineSource] = Field(default_factory=list)
+    sources: list[ClinicalEvidenceSource] = Field(default_factory=list)
     retrieval_count: int

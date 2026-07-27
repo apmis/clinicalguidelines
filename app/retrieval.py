@@ -29,13 +29,16 @@ RETRIEVAL_PLAN_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
         "retrieval_query": {"type": "string", "minLength": 1},
-        "keywords": {
+        "pubmed_keywords": {
             "type": "array",
             "items": {"type": "string"},
+            "description": (
+                "Short clinical concepts for strict AND and broad OR PubMed searches."
+            ),
             "maxItems": 8,
         },
     },
-    "required": ["retrieval_query", "keywords"],
+    "required": ["retrieval_query", "pubmed_keywords"],
     "additionalProperties": False,
 }
 
@@ -78,7 +81,7 @@ def rewrite_guideline_query(
         )
         return GuidelineRetrievalPlan.model_validate(data)
     except (RuntimeError, ValueError, TypeError):
-        return GuidelineRetrievalPlan(retrieval_query=question, keywords=[])
+        return GuidelineRetrievalPlan(retrieval_query=question, pubmed_keywords=[])
 
 
 def build_guideline_filters(payload: GuidelinesSearchRequest) -> dict[str, Any] | None:

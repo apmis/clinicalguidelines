@@ -74,7 +74,7 @@ class GuidelinesOpenRouterTests(unittest.TestCase):
                         "content": json.dumps(
                             {
                                 "retrieval_query": "malaria treatment dose",
-                                "keywords": ["malaria", "dose"],
+                                "pubmed_keywords": ["malaria", "dose"],
                             }
                         )
                     }
@@ -108,7 +108,7 @@ class GuidelinesOpenRouterTests(unittest.TestCase):
             "guideline_retrieval_plan",
         )
         self.assertTrue(payload["provider"]["require_parameters"])
-        self.assertEqual(result["keywords"], ["malaria", "dose"])
+        self.assertEqual(result["pubmed_keywords"], ["malaria", "dose"])
 
 
 if __name__ == "__main__":

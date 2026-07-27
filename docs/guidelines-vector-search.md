@@ -14,11 +14,13 @@ Its job is simple:
 4. Accept a clinical question.
 5. Use a small model through OpenRouter to produce a structured retrieval query.
 6. Use OpenRouter to embed the retrieval query.
-7. Search Pinecone for candidate guideline chunks.
-8. Apply absolute and best-score-relative relevance thresholds.
-9. Remove duplicate passages and cap the final context.
-10. Use a reasoning model through OpenRouter to answer from numbered passages.
-11. Return the answer, retrieval query, and sources.
+7. Search Pinecone for candidate guideline chunks while searching PubMed with
+   strict `AND` and broad `OR` queries.
+8. Apply absolute and best-score-relative relevance thresholds to guidelines.
+9. Merge PubMed Best Match rankings and retain the best three abstracts.
+10. Remove duplicate guideline passages and cap the combined context.
+11. Use a reasoning model through OpenRouter to answer from numbered evidence.
+12. Return the answer, retrieval details, and typed sources.
 
 This does not use MongoDB yet. It was intentionally built with minimal contact with the existing codebase.
 
@@ -61,6 +63,7 @@ app/
 |-- config.py           environment-backed settings
 |-- models.py           shared validated data contracts
 |-- pipeline.py         end-to-end RAG orchestration
+|-- pubmed.py           Boolean queries, rank fusion, and article selection
 |-- retrieval.py        query rewriting, vector search, and relevance selection
 |-- synthesis.py        grounded answer generation
 |-- prompts/
@@ -68,7 +71,8 @@ app/
 |   `-- synthesis.md
 |-- clients/
 |   |-- openrouter.py   embeddings and model generation
-|   `-- pinecone.py     vector database connection
+|   |-- pinecone.py     vector database connection
+|   `-- pubmed.py       NCBI ESearch and EFetch transport/XML parsing
 `-- indexing/
     `-- service.py      chunk loading and Pinecone uploads
 ```
@@ -91,6 +95,8 @@ It reads values like:
 - `PINECONE_API_KEY`
 - `OPENROUTER_API_KEY`
 - `OPENROUTER_API_BASE`
+- `PUBMED_API_KEY`
+- `PUBMED_EMAIL`
 
 Non-secret index, embedding, batching, retrieval, timeout, and data-path values
 are fixed constants in this module and cannot be overridden by environment
@@ -128,7 +134,7 @@ Rewrites questions and searches Pinecone for relevant guideline chunks.
 
 It:
 
-1. produces a structured retrieval query and future-facing keywords
+1. produces a structured retrieval query and PubMed search concepts
 2. falls back to the original question if rewriting fails
 3. embeds the retrieval query through OpenRouter
 4. queries Pinecone
@@ -145,15 +151,19 @@ selection stage combines:
 
 ### `app/synthesis.py`
 
-Builds numbered guideline context and generates an answer with inline `[n]`
-citations. If no source passes relevance selection, it abstains without calling
-the answer model.
+Builds numbered guideline and PubMed context and generates an answer with inline
+`[n]` citations. Citation links are normalized after generation: if source `n`
+has a URL, the answer returns `[n](url)`; if it does not, the citation remains
+plain `[n]`. This keeps PubMed citations clickable while preventing the model
+from inventing placeholder or mismatched citation links. If no source passes
+relevance selection, it abstains without calling the answer model.
 
 ### `app/pipeline.py`
 
-Orchestrates query rewriting, candidate retrieval, relevance selection, and
-answer synthesis. It accepts optional trusted patient context internally, but
-the public API does not expose that field yet.
+Orchestrates query rewriting, parallel Pinecone/PubMed retrieval, relevance
+selection, and answer synthesis. It accepts optional trusted patient context
+internally, but the public API does not expose that field yet. PubMed failure is
+non-fatal so guideline retrieval can still produce an answer.
 
 ### `app/models.py`
 
@@ -226,6 +236,11 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 OPENROUTER_API_BASE=https://openrouter.ai/api/v1
 OPENROUTER_HTTP_REFERER=http://localhost:8011
 OPENROUTER_APP_TITLE=Healthstack Guidelines
+PUBMED_API_KEY=your_ncbi_api_key_here
+PUBMED_EMAIL=developer@example.com
+PUBMED_TOOL=healthstack_guidelines
+PUBMED_SEARCH_TOP_K=10
+PUBMED_MAX_CONTEXT_ARTICLES=3
 GUIDELINES_SCORE_GAP_RATIO=0.8
 GUIDELINES_MAX_CONTEXT_CHUNKS=4
 GUIDELINES_QUERY_MAX_OUTPUT_TOKENS=300

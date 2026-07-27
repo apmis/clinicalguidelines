@@ -27,7 +27,12 @@ class GuidelineQueryRewriterTests(unittest.TestCase):
                     "Uncomplicated malaria in adults: diagnosis, first-line "
                     "treatment, dose, monitoring, and escalation."
                 ),
-                "keywords": ["malaria", "adult", "treatment", "monitoring"],
+                "pubmed_keywords": [
+                    "malaria",
+                    "adult",
+                    "treatment",
+                    "monitoring",
+                ],
             }
         )
 
@@ -38,7 +43,7 @@ class GuidelineQueryRewriterTests(unittest.TestCase):
             plan = rewrite_guideline_query("How do I treat malaria?")
 
         self.assertIn("Uncomplicated malaria", plan.retrieval_query)
-        self.assertEqual(plan.keywords[0], "malaria")
+        self.assertEqual(plan.pubmed_keywords[0], "malaria")
         self.assertEqual(
             provider.arguments["schema_name"],
             "guideline_retrieval_plan",
@@ -54,7 +59,7 @@ class GuidelineQueryRewriterTests(unittest.TestCase):
             plan = rewrite_guideline_query("Gentamicin dose")
 
         self.assertEqual(plan.retrieval_query, "Gentamicin dose")
-        self.assertEqual(plan.keywords, [])
+        self.assertEqual(plan.pubmed_keywords, [])
 
 
 if __name__ == "__main__":

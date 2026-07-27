@@ -1,8 +1,9 @@
 # HealthStack Clinical Guidelines
 
 Standalone FastAPI service for searching clinical guidelines and generating
-grounded answers from the prepared NSTG 2022 dataset. It uses OpenRouter for
-embeddings and answer generation, and Pinecone for vector search.
+grounded answers from the prepared NSTG 2022 dataset and relevant PubMed
+abstracts. It uses OpenRouter for embeddings and answer generation, Pinecone
+for vector search, and NCBI E-utilities for PubMed retrieval.
 
 ## Start the service
 
@@ -20,6 +21,8 @@ Set these required values in `.env`:
 ```env
 PINECONE_API_KEY=your_pinecone_api_key
 OPENROUTER_API_KEY=your_openrouter_api_key
+PUBMED_API_KEY=your_ncbi_api_key
+PUBMED_EMAIL=developer@example.com
 ```
 
 Run the API:
@@ -43,6 +46,27 @@ curl -X POST http://127.0.0.1:8011/api/v1/copilot/guidelines/answer \
   -H "Content-Type: application/json" \
   -d '{"question":"How is uncomplicated malaria treated?"}'
 ```
+
+For answer requests, the query rewriter produces a Pinecone retrieval query and
+up to eight PubMed concepts. Guideline retrieval and PubMed retrieval then run
+in parallel. PubMed performs a strict `AND` search and a broader `OR` search,
+merges PubMed's Best Match rankings, and adds at most three abstract-bearing
+articles to the numbered synthesis context. PubMed errors fail soft so the
+guideline-only answer path remains available.
+Context space is budgeted across all selected sources so large guideline chunks
+cannot crowd the selected PubMed abstracts out of synthesis.
+
+The answer response's `sources` list contains typed `guideline` and `pubmed`
+records in citation order. It also exposes the PubMed keywords and final Boolean
+queries for observability.
+Inline answer citations use the same source numbers. When a cited source has a
+URL, such as a PubMed article, the citation is returned as a clickable Markdown
+link.
+
+PubMed data is provided by the National Library of Medicine. NLM does not
+warrant the data or resulting use, and article abstracts may be copyrighted by
+their publishers or authors. See the [NCBI disclaimer and copyright
+notice](https://www.ncbi.nlm.nih.gov/home/about/policies/).
 
 ## Test and index
 
