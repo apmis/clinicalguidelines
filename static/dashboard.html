@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthStack Guidelines — Monitor</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e1e4ed;
+    --muted: #8b8fa3;
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --accent: #6366f1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 0.875rem; margin-bottom: 24px; }
+
+  /* Summary cards */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+  .card .unit { font-size: 0.75rem; color: var(--muted); }
+
+  /* Query input */
+  .query-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .query-bar input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    outline: none;
+    padding: 8px;
+  }
+  .query-bar button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .query-bar button:hover { opacity: 0.9; }
+  .query-bar button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 8px 0;
+    font-size: 0.85rem;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    display: inline-block;
+  }
+  .status-dot.ok { background: var(--green); }
+
+  /* Traces table */
+  .traces-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .traces-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .traces-table td {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .traces-table tr:hover td { background: rgba(255,255,255,0.02); cursor: pointer; }
+  .traces-table tr.expanded td { background: rgba(99,102,241,0.06); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge-success { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-error { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-info { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+  /* Expand detail */
+  .detail-row td {
+    padding: 0;
+    border-bottom: 2px solid var(--accent);
+  }
+  .detail {
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .detail-section {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    overflow: auto;
+  }
+  .detail-section.full { grid-column: 1 / -1; }
+  .detail-section h4 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .detail-section pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.8rem;
+    color: var(--text);
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .detail-section .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-section .meta-label { color: var(--muted); }
+
+  .source-item {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+  }
+  .source-item:last-child { border-bottom: none; }
+  .source-item .src-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .source-item .src-meta {
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+  .source-item .src-text {
+    margin-top: 4px;
+    color: var(--text);
+    font-size: 0.78rem;
+    max-height: 80px;
+    overflow-y: auto;
+  }
+  .score-bar {
+    display: inline-block;
+    background: var(--accent);
+    height: 4px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  /* Footer controls */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 0.8rem;
+  }
+  .controls button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .controls button:hover { color: var(--text); border-color: var(--accent); }
+  .controls .danger { color: var(--red); border-color: var(--red); }
+  .controls .danger:hover { background: rgba(239,68,68,0.1); }
+
+  .loading-msg { text-align: center; color: var(--muted); padding: 40px; }
+
+  .truncate { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mono { font-family: 'SF Mono', Monaco, monospace; font-size: 0.75rem; }
+
+  @media (max-width: 768px) {
+    .detail { grid-template-columns: 1fr; }
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .traces-table th:nth-child(5),
+    .traces-table td:nth-child(5),
+    .traces-table th:nth-child(4),
+    .traces-table td:nth-child(4) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Guidelines RAG Monitor</h1>
+  <p class="subtitle">Real-time pipeline traces — query rewriting, retrieval, synthesis</p>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="query-bar">
+    <input id="questionInput" type="text" placeholder="Enter a clinical question to trace through the pipeline...">
+    <button id="sendBtn" onclick="sendQuery()">Trace Query</button>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-dot ok" id="statusDot"></span>
+    <span id="statusText">Connected</span>
+    <span style="margin-left:auto;color:var(--muted)" id="refreshInfo">auto-refresh every 5s</span>
+  </div>
+
+  <table class="traces-table">
+    <thead>
+      <tr>
+        <th style="width:50px">#</th>
+        <th style="width:160px">Timestamp</th>
+        <th>Question</th>
+        <th style="width:80px">Status</th>
+        <th style="width:90px">Latency</th>
+        <th style="width:80px">Sources</th>
+      </tr>
+    </thead>
+    <tbody id="tracesBody">
+      <tr><td colspan="6" class="loading-msg">Loading traces…</td></tr>
+    </tbody>
+  </table>
+
+  <div class="controls">
+    <span id="traceCount">0 traces</span>
+    <button class="danger" onclick="clearTraces()">Clear All Traces</button>
+  </div>
+</div>
+
+<script>
+const API = '/dashboard/api/traces';
+let traces = [];
+let expandedId = null;
+let autoRefresh = true;
+
+document.getElementById('questionInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendQuery();
+});
+
+async function loadTraces() {
+  try {
+    const res = await fetch(API);
+    const data = await res.json();
+    traces = data.traces || [];
+    renderSummary(data.summary);
+    renderTraces();
+    updateStatus(true);
+  } catch (e) {
+    updateStatus(false);
+  }
+}
+
+function updateStatus(ok) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  if (ok) {
+    dot.className = 'status-dot ok';
+    txt.textContent = 'Connected';
+  } else {
+    dot.className = 'status-dot';
+    txt.textContent = 'Disconnected';
+  }
+}
+
+function renderSummary(s) {
+  if (!s) return;
+  document.getElementById('summary').innerHTML = `
+    <div class="card">
+      <div class="label">Total Requests</div>
+      <div class="value">${s.total_requests}</div>
+    </div>
+    <div class="card">
+      <div class="label">Success Rate</div>
+      <div class="value" style="color:${s.total_requests ? (s.error_count===0?'var(--green)':'var(--amber)') : 'var(--muted)'}">
+        ${s.total_requests ? Math.round(s.success_count / s.total_requests * 100) : 0}<span class="unit">%</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Avg Latency</div>
+      <div class="value">${s.avg_latency_ms}<span class="unit">ms</span></div>
+    </div>
+    <div class="card">
+      <div class="label">Avg Sources</div>
+      <div class="value">${s.avg_retrieval_count}</div>
+    </div>
+    <div class="card">
+      <div class="label">Errors</div>
+      <div class="value" style="color:${s.error_count ? 'var(--red)' : 'var(--green)'}">${s.error_count}</div>
+    </div>
+  `;
+}
+
+function renderTraces() {
+  const tbody = document.getElementById('tracesBody');
+  document.getElementById('traceCount').textContent = traces.length + ' traces';
+
+  if (traces.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="loading-msg">No traces yet. Send a query to get started.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = traces.map((t, i) => {
+    const time = new Date(t.timestamp).toLocaleTimeString();
+    const date = new Date(t.timestamp).toLocaleDateString();
+    const isExpanded = expandedId === t.id;
+    const statusClass = t.status === 'success' ? 'badge-success' : 'badge-error';
+    const question = (t.question || '').substring(0, 100);
+    const latency = t.latency_ms.toFixed(0);
+
+    let rows = `<tr class="${isExpanded ? 'expanded' : ''}" onclick="toggleExpand('${t.id}', event)">
+      <td class="mono">${traces.length - i}</td>
+      <td class="mono" style="white-space:nowrap">${date}<br>${time}</td>
+      <td><span class="truncate" style="display:block;max-width:400px" title="${esc(t.question)}">${esc(question)}${t.question.length>100?'…':''}</span></td>
+      <td><span class="badge ${statusClass}">${t.status}</span></td>
+      <td class="mono">${latency} ms</td>
+      <td>${t.retrieval_count} (${t.guideline_count}G/${t.pubmed_count}P)</td>
+    </tr>`;
+
+    if (isExpanded) {
+      rows += renderDetail(t);
+    }
+
+    return rows;
+  }).join('');
+}
+
+function renderDetail(t) {
+  const guidelines = []; // source details not stored on trace — we show counts
+  const pubmed = [];
+
+  return `<tr class="detail-row"><td colspan="6">
+    <div class="detail">
+
+      <div class="detail-section full">
+        <h4>Question</h4>
+        <pre>${esc(t.question)}</pre>
+      </div>
+
+      <div class="detail-section">
+        <h4>Query Rewrite</h4>
+        <pre>${esc(t.retrieval_query || '(none)')}</pre>
+      </div>
+
+      <div class="detail-section">
+        <h4>PubMed Keywords & Queries</h4>
+        <div class="meta-row"><span class="meta-label">Keywords</span><span>${esc((t.pubmed_keywords || []).join(', ') || '(none)')}</span></div>
+        ${t.pubmed_and_query ? `<div class="meta-row"><span class="meta-label">AND Query</span><span class="mono">${esc(t.pubmed_and_query)}</span></div>` : ''}
+        ${t.pubmed_or_query ? `<div class="meta-row"><span class="meta-label">OR Query</span><span class="mono">${esc(t.pubmed_or_query)}</span></div>` : ''}
+      </div>
+
+      <div class="detail-section">
+        <h4>Retrieval Results</h4>
+        <div class="meta-row"><span class="meta-label">Total Sources</span><span>${t.retrieval_count}</span></div>
+        <div class="meta-row"><span class="meta-label">Guideline Chunks</span><span>${t.guideline_count}</span></div>
+        <div class="meta-row"><span class="meta-label">PubMed Articles</span><span>${t.pubmed_count}</span></div>
+      </div>
+
+      <div class="detail-section full">
+        <h4>Model Configuration</h4>
+        <div class="meta-row"><span class="meta-label">Query Rewriting Model</span><span class="mono">${esc(t.model_query)}</span></div>
+        <div class="meta-row"><span class="meta-label">Answer Generation Model</span><span class="mono">${esc(t.model_answer)}</span></div>
+        <div class="meta-row"><span class="meta-label">Embedding Model</span><span class="mono">${esc(t.embedding_model)}</span></div>
+        <div class="meta-row"><span class="meta-label">Latency</span><span>${t.latency_ms.toFixed(0)} ms</span></div>
+        <div class="meta-row"><span class="meta-label">Answer Tokens (approx.)</span><span>${t.answer_tokens_approx}</span></div>
+      </div>
+
+      <div class="detail-section full">
+        <h4>AI Response</h4>
+        <pre>${esc(t.answer || '(no answer)')}</pre>
+      </div>
+
+    </div>
+  </td></tr>`;
+}
+
+function esc(s) {
+  if (!s) return '';
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function toggleExpand(id, event) {
+  event.stopPropagation();
+  if (expandedId === id) {
+    expandedId = null;
+  } else {
+    expandedId = id;
+  }
+  renderTraces();
+}
+
+async function sendQuery() {
+  const input = document.getElementById('questionInput');
+  const btn = document.getElementById('sendBtn');
+  const question = input.value.trim();
+  if (!question) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Running…';
+  try {
+    const res = await fetch('/dashboard/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert('Error: ' + (err.detail || res.statusText));
+    }
+  } catch (e) {
+    alert('Request failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Trace Query';
+    loadTraces();
+  }
+}
+
+async function clearTraces() {
+  if (!confirm('Delete all traces?')) return;
+  await fetch(API, { method: 'DELETE' });
+  expandedId = null;
+  loadTraces();
+}
+
+// Toggle auto-refresh on click
+document.getElementById('refreshInfo').addEventListener('click', function() {
+  autoRefresh = !autoRefresh;
+  this.textContent = autoRefresh ? 'auto-refresh every 5s' : 'auto-refresh off (click to resume)';
+});
+
+// Initial load + auto-refresh
+loadTraces();
+setInterval(() => { if (autoRefresh) loadTraces(); }, 5000);
+</script>
+</body>
+</html>
