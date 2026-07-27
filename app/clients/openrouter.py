@@ -5,7 +5,7 @@ import urllib.error
 import urllib.request
 from typing import Any, Protocol
 
-from app.guidelines.config import (
+from app.config import (
     GUIDELINES_EMBEDDING_DIMENSIONS,
     GUIDELINES_EMBEDDING_MODEL,
     GUIDELINES_REQUEST_TIMEOUT_SECS,

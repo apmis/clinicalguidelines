@@ -5,12 +5,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from app.guidelines.clients.openrouter import (
+from app.clients.openrouter import (
     EmbeddingProvider,
     get_guidelines_embedding_provider,
 )
-from app.guidelines.clients.pinecone import get_guidelines_index
-from app.guidelines.config import (
+from app.clients.pinecone import get_guidelines_index
+from app.config import (
     GUIDELINES_EMBED_BATCH_SIZE,
     GUIDELINES_EMBEDDING_DIMENSIONS,
     GUIDELINES_EMBEDDING_MODEL,

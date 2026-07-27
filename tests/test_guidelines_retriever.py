@@ -3,12 +3,12 @@
 import unittest
 from unittest.mock import patch
 
-from app.guidelines.config import (
+from app.config import (
     GUIDELINES_EMBEDDING_DIMENSIONS,
     PINECONE_GUIDELINES_NAMESPACE,
 )
-from app.guidelines.models import GuidelineSource, GuidelinesSearchRequest
-from app.guidelines.retrieval import (
+from app.models import GuidelineSource, GuidelinesSearchRequest
+from app.retrieval import (
     build_guideline_filters,
     select_relevant_guidelines,
     search_guidelines,
@@ -153,11 +153,11 @@ class GuidelinesRetrieverTests(unittest.TestCase):
 
         with (
             patch(
-                "app.guidelines.retrieval.get_guidelines_embedding_provider",
+                "app.retrieval.get_guidelines_embedding_provider",
                 return_value=FakeProvider(GUIDELINES_EMBEDDING_DIMENSIONS),
             ),
             patch(
-                "app.guidelines.retrieval.get_guidelines_index",
+                "app.retrieval.get_guidelines_index",
                 return_value=index,
             ),
         ):
@@ -182,11 +182,11 @@ class GuidelinesRetrieverTests(unittest.TestCase):
     def test_converts_pinecone_failure_to_runtime_error(self):
         with (
             patch(
-                "app.guidelines.retrieval.get_guidelines_embedding_provider",
+                "app.retrieval.get_guidelines_embedding_provider",
                 return_value=FakeProvider(GUIDELINES_EMBEDDING_DIMENSIONS),
             ),
             patch(
-                "app.guidelines.retrieval.get_guidelines_index",
+                "app.retrieval.get_guidelines_index",
                 return_value=FailingIndex(),
             ),
         ):

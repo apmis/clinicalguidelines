@@ -5,7 +5,7 @@ from typing import Any
 
 from pinecone import Pinecone
 
-from app.guidelines.config import (
+from app.config import (
     PINECONE_GUIDELINES_INDEX_HOST,
     PINECONE_GUIDELINES_INDEX_NAME,
     get_guidelines_settings,

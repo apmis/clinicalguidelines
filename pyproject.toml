@@ -21,4 +21,4 @@ dependencies = [
 include = ["app*"]
 
 [tool.setuptools.package-data]
-"app.guidelines" = ["prompts/*.md"]
+"app" = ["prompts/*.md"]

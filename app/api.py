@@ -2,15 +2,15 @@
 
 from fastapi import APIRouter, HTTPException, status
 
-from app.guidelines.models import (
+from app.models import (
     GuidelinesAnswerRequest,
     GuidelinesAnswerResponse,
     GuidelinesPipelineInput,
     GuidelinesSearchRequest,
     GuidelinesSearchResponse,
 )
-from app.guidelines.pipeline import answer_guideline_question
-from app.guidelines.retrieval import build_guideline_filters, search_guidelines
+from app.pipeline import answer_guideline_question
+from app.retrieval import build_guideline_filters, search_guidelines
 
 router = APIRouter(tags=["guidelines"])
 

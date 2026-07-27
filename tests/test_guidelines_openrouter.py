@@ -4,7 +4,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from app.guidelines.clients.openrouter import (
+from app.clients.openrouter import (
     OpenRouterGuidelinesEmbeddingProvider,
     OpenRouterGuidelinesModelProvider,
 )
@@ -37,7 +37,7 @@ class GuidelinesOpenRouterTests(unittest.TestCase):
         )
 
         with patch(
-            "app.guidelines.clients.openrouter.urllib.request.urlopen",
+            "app.clients.openrouter.urllib.request.urlopen",
             return_value=FakeResponse(
                 {
                     "data": [
@@ -83,7 +83,7 @@ class GuidelinesOpenRouterTests(unittest.TestCase):
         }
 
         with patch(
-            "app.guidelines.clients.openrouter.urllib.request.urlopen",
+            "app.clients.openrouter.urllib.request.urlopen",
             return_value=FakeResponse(result_body),
         ) as urlopen:
             result = provider.generate_json(

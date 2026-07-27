@@ -6,11 +6,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from app.guidelines.config import (
+from app.config import (
     GUIDELINES_EMBEDDING_DIMENSIONS,
     PINECONE_GUIDELINES_NAMESPACE,
 )
-from app.guidelines.indexing.service import (
+from app.indexing.service import (
     GuidelineChunk,
     index_guideline_chunks,
     load_guideline_chunks,
@@ -76,7 +76,7 @@ class GuidelinesIngestionTests(unittest.TestCase):
         ]
 
         with patch(
-            "app.guidelines.indexing.service.get_guidelines_index"
+            "app.indexing.service.get_guidelines_index"
         ) as get_index:
             stats = index_guideline_chunks(chunks, dry_run=True)
 
@@ -97,7 +97,7 @@ class GuidelinesIngestionTests(unittest.TestCase):
         index = FakeIndex()
 
         with patch(
-            "app.guidelines.indexing.service.get_guidelines_index",
+            "app.indexing.service.get_guidelines_index",
             return_value=index,
         ):
             stats = index_guideline_chunks(chunks, provider=provider)
@@ -124,7 +124,7 @@ class GuidelinesIngestionTests(unittest.TestCase):
         index = FakeIndex()
 
         with patch(
-            "app.guidelines.indexing.service.get_guidelines_index",
+            "app.indexing.service.get_guidelines_index",
             return_value=index,
         ):
             index_guideline_chunks(

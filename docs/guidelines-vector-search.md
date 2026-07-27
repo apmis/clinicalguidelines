@@ -56,7 +56,7 @@ pipeline.
 ## Package Layout
 
 ```text
-app/guidelines/
+app/
 |-- api.py              HTTP routes
 |-- config.py           environment-backed settings
 |-- models.py           shared validated data contracts
@@ -76,13 +76,13 @@ app/guidelines/
 `indexing` does not depend on the request pipeline. The runtime dependency
 direction is `api -> pipeline -> retrieval/synthesis -> clients`.
 
-Prompt content lives only in `app/guidelines/prompts/query_rewriter.md` and
-`app/guidelines/prompts/synthesis.md`. The files are packaged with the service
+Prompt content lives only in `app/prompts/query_rewriter.md` and
+`app/prompts/synthesis.md`. The files are packaged with the service
 and versioned through source control.
 
 ## Files Added
 
-### `app/guidelines/config.py`
+### `app/config.py`
 
 Loads settings for the standalone guideline service.
 
@@ -96,7 +96,7 @@ Non-secret index, embedding, batching, retrieval, timeout, and data-path values
 are fixed constants in this module and cannot be overridden by environment
 variables.
 
-### `app/guidelines/clients/openrouter.py`
+### `app/clients/openrouter.py`
 
 Wraps OpenRouter embedding and Chat Completions API calls.
 
@@ -107,12 +107,12 @@ It provides:
 - structured query rewriting
 - grounded answer generation
 
-### `app/guidelines/clients/pinecone.py`
+### `app/clients/pinecone.py`
 
 Creates the Pinecone client and connects to the guideline index using the fixed
-production host in `app/guidelines/config.py`.
+production host in `app/config.py`.
 
-### `app/guidelines/indexing/service.py`
+### `app/indexing/service.py`
 
 Loads the prepared guideline JSON files, validates them, creates vector records, and uploads them to Pinecone.
 
@@ -122,7 +122,7 @@ Each Pinecone vector gets a stable ID like:
 nstg-2022:MAL_006
 ```
 
-### `app/guidelines/retrieval.py`
+### `app/retrieval.py`
 
 Rewrites questions and searches Pinecone for relevant guideline chunks.
 
@@ -143,27 +143,27 @@ selection stage combines:
 - `GUIDELINES_SCORE_GAP_RATIO`: required score relative to the best match
 - `GUIDELINES_MAX_CONTEXT_CHUNKS`: maximum passages sent to synthesis
 
-### `app/guidelines/synthesis.py`
+### `app/synthesis.py`
 
 Builds numbered guideline context and generates an answer with inline `[n]`
 citations. If no source passes relevance selection, it abstains without calling
 the answer model.
 
-### `app/guidelines/pipeline.py`
+### `app/pipeline.py`
 
 Orchestrates query rewriting, candidate retrieval, relevance selection, and
 answer synthesis. It accepts optional trusted patient context internally, but
 the public API does not expose that field yet.
 
-### `app/guidelines/models.py`
+### `app/models.py`
 
 Defines the request and response shapes for the guideline API.
 
-### `app/guidelines/api.py`
+### `app/api.py`
 
 Defines the guideline search and complete RAG answer routes.
 
-### `app/guidelines_main.py`
+### `app_main.py`
 
 Creates a standalone FastAPI app for the guideline search service.
 
@@ -234,7 +234,7 @@ GUIDELINES_ANSWER_REASONING_EFFORT=low
 GUIDELINES_MAX_CONTEXT_CHARACTERS=24000
 ```
 
-The fixed values are declared in `app/guidelines/config.py`:
+The fixed values are declared in `app/config.py`:
 
 - Pinecone index: `healthstack-guidelines`
 - Pinecone host: `healthstack-guidelines-gddfi1b.svc.aped-4627-b74a.pinecone.io`
@@ -295,7 +295,7 @@ Expected result:
 Run:
 
 ```bash
-.venv/bin/uvicorn app.guidelines_main:app --reload --port 8011
+.venv/bin/uvicorn main:app --reload --port 8011
 ```
 
 Health check:

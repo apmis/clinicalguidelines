@@ -11,7 +11,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from pinecone import Pinecone, ServerlessSpec
 
-from app.guidelines.config import (
+from app.config import (
     GUIDELINES_EMBEDDING_DIMENSIONS,
     PINECONE_CLOUD,
     PINECONE_GUIDELINES_INDEX_NAME,

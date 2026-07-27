@@ -5,9 +5,9 @@ from functools import lru_cache
 from importlib.resources import files
 from typing import Any
 
-from app.guidelines.clients.openrouter import get_guidelines_model_provider
-from app.guidelines.config import GUIDELINES_ANSWER_MODEL, get_guidelines_settings
-from app.guidelines.models import GuidelineSource
+from app.clients.openrouter import get_guidelines_model_provider
+from app.config import GUIDELINES_ANSWER_MODEL, get_guidelines_settings
+from app.models import GuidelineSource
 
 
 NO_RELEVANT_GUIDELINES_ANSWER = (
@@ -20,7 +20,7 @@ NO_RELEVANT_GUIDELINES_ANSWER = (
 def _synthesis_prompt() -> str:
     try:
         prompt = (
-            files("app.guidelines")
+            files("app")
             .joinpath("prompts", "synthesis.md")
             .read_text(encoding="utf-8")
             .strip()

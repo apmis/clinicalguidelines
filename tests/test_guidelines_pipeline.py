@@ -3,13 +3,13 @@
 import unittest
 from unittest.mock import patch
 
-from app.guidelines.models import (
+from app.models import (
     GuidelineRetrievalPlan,
     GuidelineSource,
     GuidelinesPipelineInput,
 )
-from app.guidelines.pipeline import answer_guideline_question
-from app.guidelines.synthesis import (
+from app.pipeline import answer_guideline_question
+from app.synthesis import (
     NO_RELEVANT_GUIDELINES_ANSWER,
     synthesize_guideline_answer,
 )
@@ -38,22 +38,22 @@ class GuidelinesPipelineTests(unittest.TestCase):
 
         with (
             patch(
-                "app.guidelines.pipeline.rewrite_guideline_query",
+                "app.pipeline.rewrite_guideline_query",
                 return_value=GuidelineRetrievalPlan(
                     retrieval_query="uncomplicated malaria treatment",
                     keywords=["malaria", "treatment"],
                 ),
             ) as rewrite,
             patch(
-                "app.guidelines.pipeline.retrieve_guideline_candidates",
+                "app.pipeline.retrieve_guideline_candidates",
                 return_value=[source],
             ) as retrieve,
             patch(
-                "app.guidelines.pipeline.select_relevant_guidelines",
+                "app.pipeline.select_relevant_guidelines",
                 return_value=[source],
             ) as select,
             patch(
-                "app.guidelines.pipeline.synthesize_guideline_answer",
+                "app.pipeline.synthesize_guideline_answer",
                 return_value="Use the guideline regimen [1].",
             ) as synthesize,
         ):
@@ -75,7 +75,7 @@ class GuidelinesPipelineTests(unittest.TestCase):
 
     def test_empty_sources_abstain_without_calling_model(self):
         with patch(
-            "app.guidelines.synthesis.get_guidelines_model_provider"
+            "app.synthesis.get_guidelines_model_provider"
         ) as provider:
             answer = synthesize_guideline_answer(
                 question="An unrelated question",

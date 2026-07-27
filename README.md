@@ -25,7 +25,7 @@ OPENROUTER_API_KEY=your_openrouter_api_key
 Run the API:
 
 ```bash
-uvicorn app.guidelines_main:app --reload --port 8011
+uvicorn main:app --reload --port 8011
 ```
 
 Endpoints:

@@ -6,11 +6,11 @@ from unittest.mock import patch
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from app.guidelines.api import (
+from app.api import (
     answer_copilot_guidelines,
     search_copilot_guidelines,
 )
-from app.guidelines.models import (
+from app.models import (
     GuidelinesAnswerRequest,
     GuidelinesAnswerResponse,
     GuidelineSource,
@@ -39,7 +39,7 @@ class GuidelinesApiTests(unittest.TestCase):
         )
         with (
             patch(
-                "app.guidelines.api.search_guidelines",
+                "app.api.search_guidelines",
                 return_value=[source],
             ) as search,
         ):
@@ -55,7 +55,7 @@ class GuidelinesApiTests(unittest.TestCase):
     def test_maps_provider_failure_to_service_unavailable(self):
         with (
             patch(
-                "app.guidelines.api.search_guidelines",
+                "app.api.search_guidelines",
                 side_effect=RuntimeError("Pinecone failed"),
             ),
         ):
@@ -81,7 +81,7 @@ class GuidelinesApiTests(unittest.TestCase):
         )
 
         with patch(
-            "app.guidelines.api.answer_guideline_question",
+            "app.api.answer_guideline_question",
             return_value=expected,
         ) as answer:
             response = answer_copilot_guidelines(
@@ -102,7 +102,7 @@ class GuidelinesApiTests(unittest.TestCase):
 
     def test_answer_endpoint_maps_pipeline_failure_to_service_unavailable(self):
         with patch(
-            "app.guidelines.api.answer_guideline_question",
+            "app.api.answer_guideline_question",
             side_effect=RuntimeError("model failed"),
         ):
             with self.assertRaises(HTTPException) as caught:

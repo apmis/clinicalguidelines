@@ -5,12 +5,12 @@ from functools import lru_cache
 from importlib.resources import files
 from typing import Any
 
-from app.guidelines.clients.openrouter import (
+from app.clients.openrouter import (
     get_guidelines_embedding_provider,
     get_guidelines_model_provider,
 )
-from app.guidelines.clients.pinecone import get_guidelines_index
-from app.guidelines.config import (
+from app.clients.pinecone import get_guidelines_index
+from app.config import (
     GUIDELINES_EMBEDDING_DIMENSIONS,
     GUIDELINES_MIN_VECTOR_SCORE,
     GUIDELINES_QUERY_MODEL,
@@ -18,7 +18,7 @@ from app.guidelines.config import (
     PINECONE_GUIDELINES_NAMESPACE,
     get_guidelines_settings,
 )
-from app.guidelines.models import (
+from app.models import (
     GuidelineRetrievalPlan,
     GuidelineSource,
     GuidelinesSearchRequest,
@@ -44,7 +44,7 @@ RETRIEVAL_PLAN_SCHEMA: dict[str, Any] = {
 def _query_rewriter_prompt() -> str:
     try:
         prompt = (
-            files("app.guidelines")
+            files("app")
             .joinpath("prompts", "query_rewriter.md")
             .read_text(encoding="utf-8")
             .strip()

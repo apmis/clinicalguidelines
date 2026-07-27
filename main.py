@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.guidelines.api import router
+from app.api import router
 
 app = FastAPI(
     title="HealthStack Guidelines API",

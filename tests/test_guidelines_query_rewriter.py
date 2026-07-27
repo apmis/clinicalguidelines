@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import patch
 
-from app.guidelines.retrieval import rewrite_guideline_query
+from app.retrieval import rewrite_guideline_query
 
 
 class FakeModelProvider:
@@ -32,7 +32,7 @@ class GuidelineQueryRewriterTests(unittest.TestCase):
         )
 
         with patch(
-            "app.guidelines.retrieval.get_guidelines_model_provider",
+            "app.retrieval.get_guidelines_model_provider",
             return_value=provider,
         ):
             plan = rewrite_guideline_query("How do I treat malaria?")
@@ -48,7 +48,7 @@ class GuidelineQueryRewriterTests(unittest.TestCase):
         provider = FakeModelProvider(error=RuntimeError("model unavailable"))
 
         with patch(
-            "app.guidelines.retrieval.get_guidelines_model_provider",
+            "app.retrieval.get_guidelines_model_provider",
             return_value=provider,
         ):
             plan = rewrite_guideline_query("Gentamicin dose")

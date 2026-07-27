@@ -1,15 +1,15 @@
 """Orchestrates query planning, retrieval, relevance selection, and synthesis."""
 
-from app.guidelines.models import (
+from app.models import (
     GuidelinesAnswerResponse,
     GuidelinesPipelineInput,
 )
-from app.guidelines.retrieval import (
+from app.retrieval import (
     rewrite_guideline_query,
     retrieve_guideline_candidates,
     select_relevant_guidelines,
 )
-from app.guidelines.synthesis import synthesize_guideline_answer
+from app.synthesis import synthesize_guideline_answer
 
 
 def answer_guideline_question(
