@@ -58,7 +58,8 @@ The repository includes a `render.yaml` Blueprint for two connected services:
 
 Create a new Render Blueprint from this repository and provide the requested
 Pinecone, OpenRouter, and PubMed credentials in the Render dashboard. Secret
-values are intentionally not stored in source control.
+values are intentionally not stored in source control. The Blueprint passes
+the API's Render URL to the Streamlit service automatically.
 
 Endpoints:
 
