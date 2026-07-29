@@ -31,6 +31,35 @@ Run the API:
 uvicorn main:app --reload --port 8011
 ```
 
+## Streamlit test client
+
+With the API running, open a second terminal in the project directory:
+
+```bash
+python -m streamlit run streamlit_app.py
+```
+
+The test client opens at `http://127.0.0.1:8502`. It includes:
+
+- a service health check;
+- grounded guideline and PubMed answers;
+- direct guideline search with optional filters;
+- a raw JSON response viewer.
+
+To test an API running elsewhere, set `GUIDELINES_API_URL` before starting
+Streamlit or change the base URL in the client sidebar.
+
+## Deploy on Render
+
+The repository includes a `render.yaml` Blueprint for two connected services:
+
+- `healthstack-guidelines-api` runs FastAPI;
+- `healthstack-guidelines-ui` runs the Streamlit test client.
+
+Create a new Render Blueprint from this repository and provide the requested
+Pinecone, OpenRouter, and PubMed credentials in the Render dashboard. Secret
+values are intentionally not stored in source control.
+
 Endpoints:
 
 ```text
